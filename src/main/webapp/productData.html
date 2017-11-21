@@ -1,0 +1,270 @@
+<!DOCTYPE HTML>
+
+<html>
+<head>
+	  <title>Spring Boot - AngMongo Example</title>
+	  <meta charset="utf-8" />
+	  <meta name="viewport" content="width=device-width, initial-scale=1" />
+	  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.0/angular.min.js"></script>
+	  <script src="view/view.js"></script>
+	  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" />
+	  
+</head>
+<style>
+
+.elegant-aero {
+  background: #D2E9FF;
+  padding: 20px 20px 20px 20px;
+  font: 12px Arial, Helvetica, sans-serif;
+  color: #666;
+}
+
+.elegant-aero label {
+  display: block;
+  margin: 0px 0px 5px;
+}
+
+.elegant-aero input[type="text"], .elegant-aero textarea {
+  color: #888;
+  width: 60%;
+  padding: 0px 0px 0px 5px;
+  border: 1px solid #C5E2FF;
+  background: #FBFBFB;
+  outline: 0;
+  -webkit-box-shadow:inset 0px 1px 6px #ECF3F5;
+  box-shadow: inset 0px 1px 6px #ECF3F5;
+  font: 200 12px/25px Arial, Helvetica, sans-serif;
+  height: 30px;
+  line-height:15px;
+  margin: 2px 6px 16px 0px;
+}
+
+.blue-button {
+	background: #c0c0c0;
+	filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#25A6E1',
+		endColorstr='#188BC0', GradientType=0);
+	padding: 3px 5px;
+	color: #ffe;
+	font-family: 'Helvetica Neue', sans-serif;
+	font-size: 12px;
+	border-radius: 2px;
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 4px;
+	border: 1px solid #1A87B9
+}
+
+.red-button {
+	background: #808080;
+	padding: 3px 5px;
+	color: #fff;
+	font-family: 'Helvetica Neue', sans-serif;
+	font-size: 12px;
+	border-radius: 2px;
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 4px;
+	border: 1px solid #CD5C5C
+}
+
+table {
+	font-family: "Helvetica Neue", cursive
+	width: 50%;
+	align-items: right;
+	
+}
+
+caption {
+	text-align: left;
+	color: #ffe;
+	font-weight: bold;
+	text-transform: uppercase;
+	padding: 5px;
+}
+
+th {
+	background: #D2E9FF;
+	color: block;
+	text-align: center
+}
+
+tbody tr:nth-child(even) {
+	background: WhiteSmoke;
+}
+
+tbody tr td:nth-child(2) {
+	text-align: center;
+}
+
+tbody tr td:nth-child(3), tbody tr td:nth-child(4) {
+	text-align: left;
+	font-family: monospace;
+}
+
+tfoot {
+	background: SeaGreen;
+	color: white;
+	text-align: right;
+}
+
+tfoot tr th:last-child {
+	font-family: monospace;
+}
+
+td, th {
+	border: 1px solid gray;
+	width: 25%;
+	text-align: center;
+	padding: 5px 10px;
+}
+h1{
+
+margin: 0 auto;text-align:center;
+}
+.tablink {
+    background-color: grey;
+    color: white;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    width:15%;
+}
+.tab {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 17px;
+}
+div.tab button:hover {
+    background-color: #ddd;
+}
+
+</style>
+
+<body>
+
+<div class="container" ng-app="app">
+
+	<div class"tab">
+      <button class="tablink" ng-click="page='products'">Products</button>
+      <button class="tablink" ng-click="page='orders'">Orders</button>
+  </div>
+  <div ng-init="page='products'"></div>
+  
+  <div ng-show="page === 'products'">
+  
+  <div ng-controller="postcontroller">
+		<form name="productForm" class="elegant-aero" ng-submit="submitForm()">
+		<label>ProductId</label>
+		 <input type="text" name="productId" class="form-control" ng-model="productId" required/>
+	    
+	        <label>ProductName</label>
+	        <input type="text" name="productName" class="form-control" ng-model="productName" required/>
+	       
+	       <label>ProductDescription</label>
+	        <input type="text" name="productDesc" class="form-control" ng-model="productDesc"/>
+	         
+	         <label>ProductType</label>
+	        <input type="text" name="productType" class="form-control" ng-model="productType"/>
+	       
+	       <label>Quantity</label>
+	        <input type="text" name="quantity" class="form-control" ng-model="quantity" required/>
+	       
+	        <button type="submit" class="btn btn-primary">Submit</button>
+	        
+	        	<a class="btn btn-primary" ng-click="updateProduct(productId,productName,productDesc,productType,quantity)">Update</a>  
+	        	<a class="btn btn-primary" ng-click="deleteProduct(productId)">Delete</a> 
+	        		<a class="btn btn-primary" ng-click="resetProduct()">Reset</a>
+	        			
+		</form>
+ 		<p>{{postResultMessage}}</p> 
+	 <button id="btn-id" ng-click="getAllProducts()">View Products</button> 
+			<table>
+				<tr>
+					<th>ProductId</th>
+					<th>ProductName</th>
+					<th>ProductDescription</th>
+					<th>ProductType</th>
+					<th>Quantity</th>
+					<th>Edit</th>
+				</tr>
+		
+				<tr ng-repeat="product in response">
+		
+					<td>{{ product.productId }}</td>
+					<td>{{ product.productName }}</td>
+					<td>{{product.productDesc}}</td>
+					<td>{{ product.productType }}</td>
+					<td>{{ product.quantity }}</td>
+			<td><a  ng-click="editProduct(product.productId,product.productName,product.productDesc,product.productType,product.quantity)">
+					 	Edit</a></td> 
+					<!-- <td><a ng-click="editProduct(product)" >Update</a>
+						| <a ng-click="deleteProduct(product)" >Delete</a></td> -->
+				</tr>
+		
+			</table>
+	 	 	
+	</div>
+	
+	 
+  
+  
+  </div>
+  
+	<div ng-show="page === 'orders'">
+ <div ng-controller="ordercontroller">
+		<form name="orderForm" class="elegant-aero" ng-submit="submitOrderForm()">
+	        <label>orderName</label>
+	        <input type="text" name="orderName" class="form-control" ng-model="orderName" required/>
+	       
+	       <label>OrderPrice</label>
+	        <input type="text" name="orderPrice" class="form-control" ng-model="orderPrice"/>
+	         
+	         <label>ProductId</label>
+	        <input type="text" name="productId" class="form-control" ng-model="productId" required/>
+	       
+	       <label>OrderStatus</label>
+	        <input type="text" name="orderStatus" class="form-control" ng-model="orderStatus""/>
+	       
+	        <button type="submit" class="btn btn-primary">Submit</button>
+	        
+	       <!--  	<a class="btn btn-primary" ng-click="updateOrder(orderName,orderPrice,productId,orderStatus)">Update Order</a> 
+	        <a class="btn btn-primary" ng-click="deleteOrder(productId)">Delete Order</a> -->
+		</form>
+ 		<p>{{postResultMessage}}</p> 
+	 	 	
+	</div> 
+	 <div ng-controller="ordercontroller">
+	 <button id="btn-id" ng-click="getAllOrders()">View Orders</button> 
+	<table>
+		<tr>
+
+			<th>OrderName</th>
+			<th>OrderPrice</th>
+			<th>ProductId</th>
+			<th>OrdersStatus</th>
+			<th>OrderId</th>
+		</tr>
+
+		<tr ng-repeat="order in response">
+
+			<td>{{ order.orderName }}</td>
+			<td>{{order.orderPrice}}</td>
+			<td>{{ order.productId }}</td>
+			<td>{{ order.orderStatus }}</td>
+				<td>{{ order.orderId }}</td>
+			
+			<td><a ng-click="updateOrder(orderName,orderPrice,productId,orderStatus,orderId)" >Update</a>
+				| <a ng-click="deleteOrder(productId)" >Delete</a></td>
+		</tr>
+
+	</table></div>
+ 
+  </div>
+ 
+	
+	 
+</div>
+</body>
+</html>
